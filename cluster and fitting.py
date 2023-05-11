@@ -129,5 +129,77 @@ def map_corr(df, size=6):
     sigma = np.sqrt(np.diag(pcov))
     low,up = err_ranges(data["Year"],Expo,popt,sigma)
     data2=data
+    #This code is creating a scatter plot
+    plt.figure()
+    sns.scatterplot(data = data2, x="Year", y="Aquaculture production (metric tons)",cmap="Accent")
+    plt.title('Scatter Plot between 1990-2015 before fitting')
+    plt.ylabel('Trade (% of GDP)')
+    #plt.xlabel('Year')
+    plt.xlim(1990,2015)
+    plt.savefig("Scatter_fit.png")
+
+
+    #The code you provided is plotting a graph to visualize the data and the fitted exponential function
+    plt.figure()
+    plt.title("Plot After Fitting")
+    plt.plot(data["Year"], data['Aquaculture production (metric tons)'], label="data")
+    plt.plot(data["Year"], data["Pop"], label="fit")
+    plt.fill_between(data["Year"], low, up, alpha=0.7)
+    plt.legend()
+    plt.xlabel("Year")   
+
+    #Corelation plot
+    plt.figure()
+    corr = datax.corr()
+    map_corr(datax)
+    plt.title("corelation")
+    plt.savefig("corelation plot.png")
+
+
+    #Scatter matrix plot
+    plt.figure()
+    pd.plotting.scatter_matrix(datax, figsize=(9, 9))
+    plt.tight_layout()
+    plt.title('Scatter plot')
+    plt.savefig("Scatter plot.png")
+
+
+    #Scatter plot
+    plt.figure()
+    plt.scatter(data['Aquaculture production (metric tons)'],data['CO2 emissions from liquid fuel consumption (% of total)'])
+    plt.title("Scatter plot")
+    plt.savefig('Plot.png')
+
+
+    #Plotting the sum of squared error
+    plt.figure()    
+    a,b = n_cluster(data_c)
+    #plt.xlabel=('K')
+    plt.ylabel('sum of squared error')
+    plt.plot(a,b)
+    plt.title('sum of squared error')
+    plt.savefig('Squared error.png')
+
+
+    #performs K-means clustering on the data frame and generate cluster predictions and resulting clusters are then plotted in a scatter plot 
+    km = KMeans(n_clusters=4)
+    pred = km.fit_predict(data_c[['Scaler_A','Scaler_C']])
+    data_c['cludter'] = pred
+    #data_c.head()
+    centers = km.cluster_centers_
+    dc1=data_c[data_c.cludter==0]
+    dc2=data_c[data_c.cludter==1]
+    dc3=data_c[data_c.cludter==2]
+    dc4=data_c[data_c.cludter==3]
+    plt.figure()
+    plt.scatter(dc1['Scaler_A'],dc1['Scaler_C'], color = 'green')
+    plt.scatter(dc2['Scaler_A'],dc2['Scaler_C'], color = 'red')
+    plt.scatter(dc3['Scaler_A'],dc3['Scaler_C'], color = 'blue')
+    plt.scatter(dc4['Scaler_A'],dc4['Scaler_C'], color = 'yellow')
+    plt.scatter(centers[:, 0], centers[:, 1], s=200, marker='*', color='black')
+    plt.title("Cluster Plot")
+    plt.savefig('Cluster plot.png')
+    plt.show()
+
 
     
