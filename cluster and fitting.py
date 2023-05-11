@@ -87,4 +87,31 @@ def map_corr(df, size=6):
 
     plt.colorbar()
     # no plt.show() at the end
+    def n_cluster(data_frame):
+        '''This function takes a data frame as an input and performs 
+        the k-means clustering algorithm to determine 
+        the optimal number of clusters. It returns a tuple of two lists: 
+        the range of k values used and the sum of squared errors (SSE) for each value of k.'''
+        k_rng = range(1,10)
+        sse=[]
+        for k in k_rng:
+            km = KMeans(n_clusters=k)
+            km.fit_predict(data_frame)
+            sse.append(km.inertia_)
+        return k_rng,sse
+
+
+    #This code reads in data from an Excel file and  the "Year" column is converted from an object to an integer type.
+    datax1 =  read_data("DATA.xls")
+    warnings.filterwarnings("ignore")
+    start = 1960
+    end = 2015
+    year = [str(i) for i in range(start, end+1)]
+    Indicator = ['Aquaculture production (metric tons)','CO2 emissions from liquid fuel consumption (% of total)']
+    data = stat_data(datax1,'Country Name', 'India', year , Indicator)
+    Indicatorx = ['Aquaculture production (metric tons)','CO2 emissions from liquid fuel consumption (% of total)','CO2 intensity (kg per kg of oil equivalent energy use)','Capture fisheries production (metric tons)']
+    datax = stat_data(datax1,'Country Name', 'India', year , Indicatorx)
+    data = data.rename_axis('Year').reset_index()
+    data['Year'] = data['Year'].astype('int')
+
     
