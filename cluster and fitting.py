@@ -113,5 +113,21 @@ def map_corr(df, size=6):
     datax = stat_data(datax1,'Country Name', 'India', year , Indicatorx)
     data = data.rename_axis('Year').reset_index()
     data['Year'] = data['Year'].astype('int')
+    #This code block is performing feature scaling on two columns of the 'data' dataframe using MinMaxScaler. 
+    scaler = MinMaxScaler()
+    scaler.fit(data[['Aquaculture production (metric tons)']])
+    data['Scaler_A'] = scaler.transform(data['Aquaculture production (metric tons)'].values.reshape(-1, 1))
+
+    scaler.fit(data[['CO2 emissions from liquid fuel consumption (% of total)']])
+    data['Scaler_C'] = scaler.transform(data['CO2 emissions from liquid fuel consumption (% of total)'].values.reshape(-1, 1))
+    data_c = data.loc[:, ['Scaler_A', 'Scaler_C']]
+
+
+    #This code defines a curve fitting process using the curve_fit() and the fitted curve is then calculated using the Expo() function with the fitted parameters and the Year column from the data.
+    popt, pcov = opt.curve_fit(Expo, data['Year'],data['Aquaculture production (metric tons)'], p0=[1000, 0.02])
+    data["Pop"] = Expo(data['Year'], *popt)
+    sigma = np.sqrt(np.diag(pcov))
+    low,up = err_ranges(data["Year"],Expo,popt,sigma)
+    data2=data
 
     
